@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class GambotApplication
 
 fun main(args: Array<String>) {
-	runApplication<GambotApplication>(*args)
+    runApplication<GambotApplication>(*args)
 }
