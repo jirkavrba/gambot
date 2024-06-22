@@ -1,4 +1,4 @@
-package dev.vrba.discord.gambot.balance
+package dev.vrba.discord.gambot.domain.balance
 
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service

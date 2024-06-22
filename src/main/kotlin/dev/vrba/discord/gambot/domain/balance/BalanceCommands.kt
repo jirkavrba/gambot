@@ -1,4 +1,4 @@
-package dev.vrba.discord.gambot.balance
+package dev.vrba.discord.gambot.domain.balance
 
 import dev.kord.common.Color
 import dev.kord.core.Kord
