@@ -15,12 +15,15 @@ import dev.kord.rest.builder.message.embed
 import dev.kord.x.emoji.Emojis
 import dev.vrba.discord.gambot.discord.DiscordModule
 import dev.vrba.discord.gambot.discord.effectiveAvatarUrl
+import dev.vrba.discord.gambot.domain.UserId
+import dev.vrba.discord.gambot.extensions.toUnit
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class BalanceCommands(
-    private val service: BalanceService,
+    private val balanceService: BalanceService,
+    private val miningService: MiningService,
 ) : DiscordModule {
     private val logger = LoggerFactory.getLogger(this::class.qualifiedName)
 
@@ -31,9 +34,10 @@ class BalanceCommands(
 
     private suspend fun Kord.registerBalanceCommands() {
         on<ReadyEvent> {
-            logger.info("Registering balance commands...")
+            logger.info("Registering balance commands")
 
             createGlobalChatInputCommand("balance", "Display the current balance")
+
             createGlobalChatInputCommand("transfer", "Transfer a specified amount to another user's account") {
                 user("recipient", "The recipient that you want to transfer coins to.") {
                     required = true
@@ -44,6 +48,8 @@ class BalanceCommands(
                     minValue = 1
                 }
             }
+
+            createGlobalChatInputCommand("mine", "Try your luck and mine some sweet coins.")
         }
     }
 
@@ -52,13 +58,15 @@ class BalanceCommands(
             when (interaction.invokedCommandName) {
                 "balance" -> handleBalanceCommand(interaction)
                 "transfer" -> handleTransferCommand(interaction)
+                "mine" -> handleMineCommand(interaction)
             }
         }
     }
 
     private suspend fun handleBalanceCommand(interaction: ChatInputCommandInteraction) {
         val deferred = interaction.deferPublicResponse()
-        val balance = service.getUserBalance(interaction.user.id.toString())
+        val user = UserId(interaction.user)
+        val balance = balanceService.getUserBalance(user)
 
         deferred.respond {
             embed {
@@ -78,6 +86,42 @@ class BalanceCommands(
             embed {
                 color = Color(0xFEE75C)
                 title = "This feature is not implemented yet."
+            }
+        }
+    }
+
+    private suspend fun handleMineCommand(interaction: ChatInputCommandInteraction) {
+        val deferred = interaction.deferPublicResponse()
+        val user = UserId(interaction.user)
+
+        if (miningService.isUserOnCooldown(user)) {
+            return deferred
+                .respond {
+                    embed {
+                        color = Color(0xED4245)
+                        title = "You're on cooldown! Try again later"
+                        description = "The cooldown for mining coins is ${miningService.cooldownSeconds()} seconds."
+
+                        author {
+                            icon = interaction.user.effectiveAvatarUrl
+                            name = interaction.user.effectiveName
+                        }
+                    }
+                }.toUnit()
+        }
+
+        val result = miningService.mine(user)
+
+        deferred.respond {
+            embed {
+                color = Color(0x57F287)
+                title = "You mined ${result.minedCoins} coins!"
+                description = "Your current coin balance is **${result.currentBalance} coins** ${Emojis.moneybag.unicode}."
+
+                author {
+                    icon = interaction.user.effectiveAvatarUrl
+                    name = interaction.user.effectiveName
+                }
             }
         }
     }

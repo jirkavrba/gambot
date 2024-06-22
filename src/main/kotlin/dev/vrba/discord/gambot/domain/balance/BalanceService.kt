@@ -1,44 +1,46 @@
 package dev.vrba.discord.gambot.domain.balance
 
+import dev.vrba.discord.gambot.domain.UserId
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 
 @Service
 class BalanceService(
-    template: RedisTemplate<String, Long>,
+    template: RedisTemplate<String, BigInteger>,
 ) {
     private val redis = template.opsForValue()
 
     private companion object {
-        const val DEFAULT_BALANCE = 100L
+        val DEFAULT_BALANCE: BigInteger = BigInteger.valueOf(100)
     }
 
-    fun getUserBalance(userId: String): Long = redis[userId.asUserBalanceKey()] ?: DEFAULT_BALANCE
+    fun getUserBalance(id: UserId): BigInteger = redis[id.asUserBalanceKey()] ?: DEFAULT_BALANCE
 
     fun incrementUserBalanceBy(
-        userId: String,
-        amount: Long,
-    ): Long =
-        getUserBalance(userId)
+        id: UserId,
+        amount: BigInteger,
+    ): BigInteger =
+        getUserBalance(id)
             .plus(amount)
-            .also { redis.set(userId.asUserBalanceKey(), it) }
+            .also { redis.set(id.asUserBalanceKey(), it) }
 
     fun decrementUserBalanceBy(
-        userId: String,
-        amount: Long,
-    ): Long =
-        getUserBalance(userId)
+        id: UserId,
+        amount: BigInteger,
+    ): BigInteger =
+        getUserBalance(id)
             .minus(amount)
-            .also { redis.set(userId.asUserBalanceKey(), it) }
+            .also { redis.set(id.asUserBalanceKey(), it) }
 
     fun transferBalance(
-        fromUserId: String,
-        toUserId: String,
-        amount: Long,
+        sender: UserId,
+        recipient: UserId,
+        amount: BigInteger,
     ) {
-        redis.set(fromUserId.asUserBalanceKey(), getUserBalance(fromUserId) - amount)
-        redis.set(toUserId.asUserBalanceKey(), getUserBalance(toUserId) + amount)
+        redis.set(sender.asUserBalanceKey(), getUserBalance(sender) - amount)
+        redis.set(recipient.asUserBalanceKey(), getUserBalance(recipient) + amount)
     }
 
-    private fun String.asUserBalanceKey() = "balance:user:$this"
+    private fun UserId.asUserBalanceKey() = "balance:user:$value"
 }
