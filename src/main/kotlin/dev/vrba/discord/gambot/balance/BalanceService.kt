@@ -31,5 +31,14 @@ class BalanceService(
             .minus(amount)
             .also { redis.set(userId.asUserBalanceKey(), it) }
 
+    fun transferBalance(
+        fromUserId: String,
+        toUserId: String,
+        amount: Long,
+    ) {
+        redis.set(fromUserId.asUserBalanceKey(), getUserBalance(fromUserId) - amount)
+        redis.set(toUserId.asUserBalanceKey(), getUserBalance(toUserId) + amount)
+    }
+
     private fun String.asUserBalanceKey() = "balance:user:$this"
 }
