@@ -1,14 +1,13 @@
 package dev.vrba.discord.gambot.modules.balance
 
 import dev.vrba.discord.gambot.modules.shared.UserId
-import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.stereotype.Service
+import io.lettuce.core.api.StatefulRedisConnection
+import jakarta.inject.Singleton
 import java.math.BigInteger
-import java.util.concurrent.TimeUnit
 
-@Service
+@Singleton
 class MiningService(
-    template: RedisTemplate<String, Boolean>,
+    connection: StatefulRedisConnection<String, String>,
     private val balanceService: BalanceService,
 ) {
     data class MiningResult(
@@ -16,7 +15,7 @@ class MiningService(
         val currentBalance: BigInteger,
     )
 
-    private val redis = template.opsForValue()
+    private val redis = connection.sync()
 
     private companion object {
         const val USER_COOLDOWN_SECONDS = 60L
@@ -26,7 +25,7 @@ class MiningService(
 
     fun cooldownSeconds(): Long = USER_COOLDOWN_SECONDS
 
-    fun isUserOnCooldown(id: UserId): Boolean = redis.get(id.asMiningCooldownKey()) == true
+    fun isUserOnCooldown(id: UserId): Boolean = redis.get(id.asMiningCooldownKey()) == "true"
 
     fun mine(id: UserId): MiningResult {
         if (isUserOnCooldown(id)) {
@@ -36,7 +35,7 @@ class MiningService(
         val amount = (MONEY_LOWER_BOUND..MONEY_UPPER_BOUND).random().toBigInteger()
         val balance = balanceService.incrementUserBalanceBy(id, amount)
 
-        redis.set(id.asMiningCooldownKey(), true, USER_COOLDOWN_SECONDS, TimeUnit.SECONDS)
+        redis.setex(id.asMiningCooldownKey(), USER_COOLDOWN_SECONDS, "true")
 
         return MiningResult(
             minedCoins = amount,

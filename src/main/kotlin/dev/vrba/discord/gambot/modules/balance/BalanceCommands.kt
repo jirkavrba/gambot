@@ -17,10 +17,10 @@ import dev.vrba.discord.gambot.discord.DiscordModule
 import dev.vrba.discord.gambot.discord.effectiveAvatarUrl
 import dev.vrba.discord.gambot.extensions.toUnit
 import dev.vrba.discord.gambot.modules.shared.UserId
+import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 
-@Component
+@Singleton
 class BalanceCommands(
     private val balanceService: BalanceService,
     private val miningService: MiningService,

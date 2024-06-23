@@ -22,10 +22,10 @@ import dev.vrba.discord.gambot.modules.balance.BalanceService
 import dev.vrba.discord.gambot.modules.shared.Asset
 import dev.vrba.discord.gambot.modules.shared.UserId
 import dev.vrba.discord.gambot.modules.shared.notEnoughBalanceEmbed
-import org.springframework.stereotype.Component
+import jakarta.inject.Singleton
 import java.math.BigInteger
 
-@Component
+@Singleton
 class RouletteCommands(
     private val rouletteService: RouletteService,
     private val balanceService: BalanceService,

@@ -1,11 +1,7 @@
 package dev.vrba.discord.gambot
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-
-@SpringBootApplication
-class GambotApplication
+import io.micronaut.runtime.Micronaut.run
 
 fun main(args: Array<String>) {
-    runApplication<GambotApplication>(*args)
+    run(*args)
 }

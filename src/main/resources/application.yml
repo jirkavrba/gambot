@@ -1,13 +1,9 @@
-spring:
+micronaut:
   application:
     name: gambot
 
-  main:
-    web-application-type: none
-
-  data:
-    redis:
-      url: ${REDIS_URL:redis://localhost:6379}
+redis:
+  uri: ${REDIS_URL:`redis://localhost:6379`}
 
 gambot:
   discord:

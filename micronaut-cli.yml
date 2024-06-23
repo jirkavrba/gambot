@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: dev.vrba
+testFramework: kotest
+sourceLanguage: kotlin
+buildTool: gradle_kotlin
+features: [app-name, graalvm, gradle, http-client-test, kotest, kotlin, kotlin-application, kotlin-extension-functions, ksp, logback, micronaut-aot, micronaut-build, micronaut-http-validation, netty-server, readme, redis-lettuce, serialization-jackson, shade, static-resources, yaml, yaml-build]

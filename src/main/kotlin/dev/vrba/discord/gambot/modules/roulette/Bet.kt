@@ -9,7 +9,7 @@ sealed interface Bet {
 data class SingleNumberBet(
     val number: Int,
 ) : Bet {
-    override val name: String = "a single number: $number"
+    override val name: String = "the number $number"
     override val matchingNumbers: Set<Int> = setOf(number)
     override val payoutMultiplier: Int = 35
 }
