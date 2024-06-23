@@ -18,9 +18,9 @@ import dev.vrba.discord.gambot.discord.effectiveAvatarUrl
 import dev.vrba.discord.gambot.extensions.toUnit
 import dev.vrba.discord.gambot.modules.shared.UserId
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 
-@Service
+@Component
 class BalanceCommands(
     private val balanceService: BalanceService,
     private val miningService: MiningService,

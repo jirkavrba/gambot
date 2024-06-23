@@ -1,4 +1,4 @@
-package dev.vrba.discord.gambot.modules.ui
+package dev.vrba.discord.gambot.modules.shared
 
 class Asset(
     filename: String,
