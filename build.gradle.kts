@@ -1,8 +1,9 @@
 import io.micronaut.gradle.docker.NativeImageDockerfile
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.23"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.23"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.allopen") version "1.9.23"
+    kotlin("plugin.serialization") version "1.9.23"
     id("com.google.devtools.ksp") version "1.9.23-1.0.19"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.0"
@@ -14,6 +15,7 @@ group = "dev.vrba"
 
 val kotlinVersion: String by project
 val kotlinCoroutinesVersion: String by project
+val kotlinSerializationVersion: String by project
 
 repositories {
     mavenCentral()
@@ -30,6 +32,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinCoroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerializationVersion")
     implementation("dev.kord:kord-core:0.14.0")
     implementation("dev.kord.x:emoji:0.5.0")
     compileOnly("io.micronaut:micronaut-http-client")
