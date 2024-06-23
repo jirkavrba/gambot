@@ -31,7 +31,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
-        run: ./gradlew bootBuildImage
+        run: ./gradlew optimizedDockerBuildNative
 
       - name: Push Docker image to container registry
         run: docker push ghcr.io/jirkavrba/gambot:latest
