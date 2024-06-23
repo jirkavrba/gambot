@@ -6,74 +6,74 @@ sealed interface Bet {
     val payoutMultiplier: Int
 }
 
-class SingleNumberBet(
-    number: Int,
+data class SingleNumberBet(
+    val number: Int,
 ) : Bet {
-    override val name: String = "Single number: $number"
+    override val name: String = "a single number: $number"
     override val matchingNumbers: Set<Int> = setOf(number)
     override val payoutMultiplier: Int = 35
 }
 
 data object ZeroBet : Bet {
-    override val name = "0"
+    override val name = "zero"
     override val matchingNumbers = setOf(ZERO)
     override val payoutMultiplier = 35
 }
 
 data object DoubleZeroBet : Bet {
-    override val name = "00"
+    override val name = "double zero"
     override val matchingNumbers = setOf(DOUBLE_ZERO)
     override val payoutMultiplier = 35
 }
 
-class DozenBet(
-    base: Int,
+data class DozenBet(
+    val base: Int,
 ) : Bet {
-    override val name = "Dozen $base - ${base + 11}"
+    override val name = "a dozen $base - ${base + 11}"
     override val matchingNumbers = (base..(base + 11)).toSet()
     override val payoutMultiplier = 3
 }
 
-class ColumnBet(
-    base: Int,
+data class ColumnBet(
+    val base: Int,
 ) : Bet {
-    override val name = "Column $base - ${base + 33}"
+    override val name = "a column $base - ${base + 33}"
     override val matchingNumbers = BASE_NUMBERS.filter { (it % 3) == (base % 3) }.toSet()
     override val payoutMultiplier: Int = 3
 }
 
 data object LowNumberBet : Bet {
-    override val name = "Low numbers"
+    override val name = "low numbers"
     override val matchingNumbers = LOW_NUMBERS
     override val payoutMultiplier = 2
 }
 
 data object HighNumberBet : Bet {
-    override val name = "High number"
+    override val name = "high numbers"
     override val matchingNumbers = HIGH_NUMBERS
     override val payoutMultiplier = 2
 }
 
 data object EvenNumberBet : Bet {
-    override val name = "Even number"
+    override val name = "even numbers"
     override val matchingNumbers = EVEN_NUMBERS
     override val payoutMultiplier = 2
 }
 
 data object OddNumberBet : Bet {
-    override val name = "Odd number"
+    override val name = "odd numbers"
     override val matchingNumbers = ODD_NUMBERS
     override val payoutMultiplier = 2
 }
 
 data object RedNumberBet : Bet {
-    override val name = "Red number"
+    override val name = "red"
     override val matchingNumbers = RED_NUMBERS
     override val payoutMultiplier = 2
 }
 
 data object BlackNumberBet : Bet {
-    override val name = "Black number"
+    override val name = "black"
     override val matchingNumbers = BLACK_NUMBERS
     override val payoutMultiplier = 2
 }

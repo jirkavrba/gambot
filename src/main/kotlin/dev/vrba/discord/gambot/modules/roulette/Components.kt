@@ -7,7 +7,7 @@ import dev.kord.x.emoji.Emojis
 
 fun MessageBuilder.rootBetButtons() {
     actionRow {
-        interactionButton(ButtonStyle.Secondary, "roulette:numbers:selection") {
+        interactionButton(ButtonStyle.Secondary, "roulette:numbers") {
             label = "Numbers"
         }
 
