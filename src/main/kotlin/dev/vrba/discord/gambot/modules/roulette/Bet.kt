@@ -1,4 +1,4 @@
-package dev.vrba.discord.gambot.domain.roulette
+package dev.vrba.discord.gambot.modules.roulette
 
 sealed interface Bet {
     val name: String

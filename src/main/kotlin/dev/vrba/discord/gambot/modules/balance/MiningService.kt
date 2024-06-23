@@ -1,6 +1,6 @@
-package dev.vrba.discord.gambot.domain.balance
+package dev.vrba.discord.gambot.modules.balance
 
-import dev.vrba.discord.gambot.domain.UserId
+import dev.vrba.discord.gambot.modules.shared.UserId
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 import java.math.BigInteger

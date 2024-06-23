@@ -1,4 +1,4 @@
-package dev.vrba.discord.gambot.domain
+package dev.vrba.discord.gambot.modules.shared
 
 import dev.kord.core.entity.User
 

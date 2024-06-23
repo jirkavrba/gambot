@@ -1,4 +1,4 @@
-package dev.vrba.discord.gambot.domain.balance
+package dev.vrba.discord.gambot.modules.balance
 
 import dev.kord.common.Color
 import dev.kord.core.Kord
@@ -15,8 +15,8 @@ import dev.kord.rest.builder.message.embed
 import dev.kord.x.emoji.Emojis
 import dev.vrba.discord.gambot.discord.DiscordModule
 import dev.vrba.discord.gambot.discord.effectiveAvatarUrl
-import dev.vrba.discord.gambot.domain.UserId
 import dev.vrba.discord.gambot.extensions.toUnit
+import dev.vrba.discord.gambot.modules.shared.UserId
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 

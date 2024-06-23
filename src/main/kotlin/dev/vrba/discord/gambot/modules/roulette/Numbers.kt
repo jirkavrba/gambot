@@ -1,4 +1,4 @@
-package dev.vrba.discord.gambot.domain.roulette
+package dev.vrba.discord.gambot.modules.roulette
 
 const val ZERO = 0
 const val DOUBLE_ZERO = 100
