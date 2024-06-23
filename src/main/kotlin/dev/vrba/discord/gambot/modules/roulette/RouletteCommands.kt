@@ -1,9 +1,11 @@
 package dev.vrba.discord.gambot.modules.roulette
 
 import dev.kord.common.Color
+import dev.kord.common.entity.ButtonStyle
 import dev.kord.core.Kord
 import dev.kord.core.behavior.interaction.respondEphemeral
 import dev.kord.core.behavior.interaction.response.respond
+import dev.kord.core.behavior.interaction.updatePublicMessage
 import dev.kord.core.entity.effectiveName
 import dev.kord.core.entity.interaction.ButtonInteraction
 import dev.kord.core.event.gateway.ReadyEvent
@@ -11,6 +13,7 @@ import dev.kord.core.event.interaction.ButtonInteractionCreateEvent
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
 import dev.kord.rest.builder.interaction.integer
+import dev.kord.rest.builder.message.actionRow
 import dev.kord.rest.builder.message.embed
 import dev.vrba.discord.gambot.discord.DiscordModule
 import dev.vrba.discord.gambot.discord.effectiveAvatarUrl
@@ -67,23 +70,90 @@ class RouletteCommands(
 
         on<ButtonInteractionCreateEvent> {
             val id = interaction.componentId
+
+            // Optimization to save some redis calls and matching
+            if (!id.startsWith("roulette:")) return@on
+
             val user = UserId(interaction.user)
             val bid = rouletteService.getLastRouletteBid(user, 1.toBigInteger())
 
             when {
-                id == "roulette:numbers" -> TODO()
-                id == "roulette:dozens" -> TODO()
-                id == "roulette:columns" -> TODO()
-                id == "roulette:odd" -> TODO()
-                id == "roulette:even" -> TODO()
-                id == "roulette:low" -> TODO()
-                id == "roulette:high" -> TODO()
+                id == "roulette:actions:bet-again" -> handleBetAgainAction(bid, interaction)
+                id == "roulette:numbers" -> handleNumbersSelection(bid, interaction)
+                id == "roulette:dozens" -> handleDozenSelection(bid, interaction)
+                id == "roulette:columns" -> handleColumnSelection(bid, interaction)
+                id == "roulette:odd" -> handleBet(OddNumberBet, user, bid, interaction)
+                id == "roulette:even" -> handleBet(EvenNumberBet, user, bid, interaction)
+                id == "roulette:low" -> handleBet(LowNumberBet, user, bid, interaction)
+                id == "roulette:high" -> handleBet(HighNumberBet, user, bid, interaction)
                 id == "roulette:black" -> handleBet(BlackNumberBet, user, bid, interaction)
                 id == "roulette:red" -> handleBet(RedNumberBet, user, bid, interaction)
-                id.startsWith("roulette:numbers:dozen-") -> TODO()
-                id.startsWith("roulette:dozens:dozen-") -> TODO()
-                id.startsWith("roulette:columns:column-") -> TODO()
+                id == "roulette:numbers:0" -> handleBet(ZeroBet, user, bid, interaction)
+                id == "roulette:numbers:00" -> handleBet(DoubleZeroBet, user, bid, interaction)
+
+                id.startsWith("roulette:numbers:dozen-") ->
+                    handleNumbersDozenSelection(bid, interaction, id.removePrefix("roulette:numbers:dozen-").toInt())
+
+                id.startsWith("roulette:numbers:number-") ->
+                    handleBet(SingleNumberBet(id.removePrefix("roulette:numbers:number-").toInt()), user, bid, interaction)
+
+                id.startsWith("roulette:dozens:dozen-") ->
+                    handleBet(DozenBet(id.removePrefix("roulette:dozens:dozen-").toInt()), user, bid, interaction)
+
+                id.startsWith("roulette:columns:column-") ->
+                    handleBet(ColumnBet(id.removePrefix("roulette:columns:column-").toInt()), user, bid, interaction)
             }
+        }
+    }
+
+    private suspend fun handleBetAgainAction(
+        bid: BigInteger,
+        interaction: ButtonInteraction,
+    ) {
+        interaction.respondEphemeral {
+            rootBetEmbed(bid)
+            rootBetButtons()
+        }
+    }
+
+    private suspend fun handleNumbersSelection(
+        bid: BigInteger,
+        interaction: ButtonInteraction,
+    ) {
+        interaction.updatePublicMessage {
+            numberSelectionEmbed(bid)
+            numberSelectionButtons()
+        }
+    }
+
+    private suspend fun handleNumbersDozenSelection(
+        bid: BigInteger,
+        interaction: ButtonInteraction,
+        dozenBase: Int,
+    ) {
+        interaction.updatePublicMessage {
+            numberSelectionDozenEmbed(bid, dozenBase)
+            numberSelectionDozenButtons(dozenBase)
+        }
+    }
+
+    private suspend fun handleDozenSelection(
+        bid: BigInteger,
+        interaction: ButtonInteraction,
+    ) {
+        interaction.updatePublicMessage {
+            dozenSelectionEmbed(bid)
+            dozenSelectionButtons()
+        }
+    }
+
+    private suspend fun handleColumnSelection(
+        bid: BigInteger,
+        interaction: ButtonInteraction,
+    ) {
+        interaction.updatePublicMessage {
+            columnSelectionEmbed(bid)
+            columnSelectionButtons()
         }
     }
 
@@ -128,8 +198,19 @@ class RouletteCommands(
                 title = "You put $amount coins on ${bet.name}"
                 description = if (result.won) "And you won **${result.amountWon}** coins!" else "And you lost it all."
                 image = Asset(betImage).url
+
                 thumbnail {
                     url = Asset(numberImage).url
+                }
+
+                footer {
+                    text = "Your current balance is ${result.remainingBalance} coins"
+                }
+            }
+
+            actionRow {
+                interactionButton(ButtonStyle.Primary, "roulette:actions:bet-again") {
+                    label = "Bet again!"
                 }
             }
         }

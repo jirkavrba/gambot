@@ -16,6 +16,7 @@ class RouletteService(
     data class RouletteSpinResult(
         val won: Boolean,
         val amountWon: BigInteger,
+        val remainingBalance: BigInteger,
         val rolledNumber: Int,
     )
 
@@ -27,16 +28,16 @@ class RouletteService(
         val number = ALL_NUMBERS.random()
         val won = number in bet.matchingNumbers
         val amountWon = if (won) amount * bet.payoutMultiplier.toBigInteger() else BigInteger.ZERO
-
-        balanceService.decrementUserBalanceBy(user, amount)
+        var remainingBalance = balanceService.decrementUserBalanceBy(user, amount)
 
         if (won) {
-            balanceService.incrementUserBalanceBy(user, amountWon)
+            remainingBalance = balanceService.incrementUserBalanceBy(user, amountWon)
         }
 
         return RouletteSpinResult(
             won = won,
             amountWon = amountWon,
+            remainingBalance = remainingBalance,
             rolledNumber = number,
         )
     }
