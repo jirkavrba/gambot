@@ -1,8 +1,0 @@
-[
-  {
-    "interfaces": [
-      "io.lettuce.core.api.sync.RedisCommands",
-      "io.lettuce.core.cluster.api.sync.RedisClusterCommands"
-    ]
-  }
-]

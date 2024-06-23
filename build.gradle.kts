@@ -74,6 +74,10 @@ micronaut {
 }
 
 tasks {
+    optimizedDockerBuild {
+        images = setOf("ghcr.io/jirkavrba/gambot")
+    }
+
     optimizedDockerBuildNative {
         images = setOf("ghcr.io/jirkavrba/gambot")
     }
