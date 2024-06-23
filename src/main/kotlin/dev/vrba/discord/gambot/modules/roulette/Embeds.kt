@@ -8,7 +8,7 @@ import java.math.BigInteger
 fun MessageBuilder.rootBetEmbed(bid: BigInteger) {
     embed {
         title = "Select what you want to bet on."
-        description = "Your bid is $bid coins"
+        description = "You're betting **$bid** coins. To cancel the bet, simply dismiss this message."
         image = Asset("roulette.png").url
     }
 }
