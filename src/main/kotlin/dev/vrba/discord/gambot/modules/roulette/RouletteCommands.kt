@@ -78,7 +78,7 @@ class RouletteCommands(
             val bid = rouletteService.getLastRouletteBid(user, 1.toBigInteger())
 
             when {
-                id == "roulette:actions:bet-again" -> handleBetAgainAction(bid, interaction)
+                id == "roulette:actions:bet-again" -> handleBetAgainAction(bid, user, interaction)
                 id == "roulette:numbers" -> handleNumbersSelection(bid, interaction)
                 id == "roulette:dozens" -> handleDozenSelection(bid, interaction)
                 id == "roulette:columns" -> handleColumnSelection(bid, interaction)
@@ -108,8 +108,18 @@ class RouletteCommands(
 
     private suspend fun handleBetAgainAction(
         bid: BigInteger,
+        user: UserId,
         interaction: ButtonInteraction,
     ) {
+        val balance = balanceService.getUserBalance(user)
+
+        if (bid > balance) {
+            return interaction
+                .respondEphemeral {
+                    notEnoughBalanceEmbed(balance)
+                }.toUnit()
+        }
+
         interaction.respondEphemeral {
             rootBetEmbed(bid)
             rootBetButtons()
