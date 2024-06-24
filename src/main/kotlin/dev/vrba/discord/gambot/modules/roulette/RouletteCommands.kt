@@ -190,7 +190,7 @@ class RouletteCommands(
                 is DozenBet -> "roulette-dozen-${bet.base}.png"
                 is ColumnBet -> "roulette-column-${bet.base}.png"
                 is OddNumberBet -> "roulette-odd.png"
-                is EvenNumberBet -> "roulette-event.png"
+                is EvenNumberBet -> "roulette-even.png"
                 is HighNumberBet -> "roulette-high.png"
                 is LowNumberBet -> "roulette-low.png"
                 is RedNumberBet -> "roulette-red.png"
